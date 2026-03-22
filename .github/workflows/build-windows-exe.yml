@@ -121,13 +121,13 @@ jobs:
 
     steps:
       - name: Download Windows artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: AnimekoLocalMediaBridge-windows-exe
           path: release-assets/windows
 
       - name: Download macOS artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: AnimekoLocalMediaBridge-macos
           path: release-assets/macos
