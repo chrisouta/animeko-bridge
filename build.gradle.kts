@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.him188.ani"
-version = "1.0.0"
+version = "0.1"
 description = "Desktop local media bridge for Animeko"
 
 dependencies {

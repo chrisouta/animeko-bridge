@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build Desktop Packages
 
 on:
   workflow_dispatch:
@@ -74,3 +74,80 @@ jobs:
           name: AnimekoLocalMediaBridge-windows-exe
           path: build/compose/binaries/main-release/exe/*.exe
           if-no-files-found: error
+
+  build-macos:
+    runs-on: macos-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run tests and build macOS package
+        run: ./gradlew --no-daemon clean test packageReleaseDistributionForCurrentOS
+
+      - name: Create macOS app archive
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/compose/binaries/main-release/app/AnimekoLocalMediaBridge.app \
+            build/compose/binaries/main-release/dmg/AnimekoLocalMediaBridge-app.zip
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnimekoLocalMediaBridge-macos
+          path: |
+            build/compose/binaries/main-release/dmg/*.dmg
+            build/compose/binaries/main-release/dmg/*.zip
+          if-no-files-found: error
+
+  publish-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build-windows-exe
+      - build-macos
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: AnimekoLocalMediaBridge-windows-exe
+          path: release-assets/windows
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: AnimekoLocalMediaBridge-macos
+          path: release-assets/macos
+
+      - name: Create or update GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" \
+              release-assets/windows/* \
+              release-assets/macos/* \
+              --clobber
+          else
+            gh release create "$tag" \
+              release-assets/windows/* \
+              release-assets/macos/* \
+              --verify-tag \
+              --title "$tag" \
+              --generate-notes
+          fi

@@ -45,7 +45,10 @@ Common commands:
 
 Packaging notes:
 
-- Windows packaging is automated in `.github/workflows/build-windows-exe.yml`.
+- GitHub Actions builds both the Windows installer and the macOS package in `.github/workflows/build-windows-exe.yml`.
+- The Windows artifact is uploaded as `AnimekoLocalMediaBridge-windows-exe`.
+- The macOS artifact is uploaded as `AnimekoLocalMediaBridge-macos`.
+- Pushing a tag like `v0.1` will automatically create or update a GitHub release and attach the built desktop packages.
 - If you package on macOS with Homebrew `openjdk@21`, Compose may require:
   - `./gradlew packageReleaseDistributionForCurrentOS -Pcompose.desktop.packaging.checkJdkVendor=false`
 
