@@ -69,7 +69,7 @@ jobs:
         run: .\gradlew.bat clean test packageReleaseExe
 
       - name: Upload Windows EXE artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AnimekoLocalMediaBridge-windows-exe
           path: build/compose/binaries/main-release/exe/*.exe
@@ -102,7 +102,7 @@ jobs:
             build/compose/binaries/main-release/dmg/AnimekoLocalMediaBridge-app.zip
 
       - name: Upload macOS artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AnimekoLocalMediaBridge-macos
           path: |
