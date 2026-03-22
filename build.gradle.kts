@@ -8,8 +8,26 @@ plugins {
 }
 
 group = "me.him188.ani"
-version = "0.1"
+version = "0.1.0"
 description = "Desktop local media bridge for Animeko"
+
+val nativePackageParts = project.version.toString()
+    .split('.')
+    .filter(String::isNotBlank)
+    .map { it.takeWhile(Char::isDigit).ifBlank { "0" }.toInt() }
+    .let { parts ->
+        listOf(
+            parts.getOrElse(0) { 0 },
+            parts.getOrElse(1) { 0 },
+            parts.getOrElse(2) { 0 },
+        )
+    }
+
+val nativePackageVersion = nativePackageParts.joinToString(".")
+val macOsPackageVersion = nativePackageParts
+    .let { (major, minor, patch) ->
+        listOf(if (major == 0) 1 else major, minor, patch).joinToString(".")
+    }
 
 dependencies {
     implementation(compose.desktop.currentOs)
@@ -33,8 +51,6 @@ compose.desktop {
         }
         nativeDistributions {
             modules("java.desktop", "jdk.httpserver")
-        }
-        nativeDistributions {
             targetFormats(
                 TargetFormat.Dmg,
                 TargetFormat.Exe,
@@ -44,7 +60,14 @@ compose.desktop {
             packageName = "AnimekoLocalMediaBridge"
             description = project.description
             vendor = "OpenAni contributors"
-            packageVersion = project.version.toString()
+            packageVersion = nativePackageVersion
+
+            macOS {
+                packageVersion = macOsPackageVersion
+                dmgPackageVersion = macOsPackageVersion
+                packageBuildVersion = macOsPackageVersion
+                dmgPackageBuildVersion = macOsPackageVersion
+            }
         }
     }
 }
