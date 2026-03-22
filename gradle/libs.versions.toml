@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 compose-multiplatform = "1.10.3"
 compose-material = "1.7.3"
 compose-material3 = "1.10.0-alpha05"
