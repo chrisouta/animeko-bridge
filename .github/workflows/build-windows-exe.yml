@@ -27,7 +27,7 @@ jobs:
           java-version: "21"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Install WiX Toolset
         shell: pwsh
@@ -90,7 +90,7 @@ jobs:
           java-version: "21"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Run tests and build macOS package
         run: ./gradlew --no-daemon clean test packageReleaseDistributionForCurrentOS
